@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, CircleUserRound, MenuIcon, Search, ShoppingCart } from "lucide-react";
+import {MenuIcon, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Order } from "./Order";
@@ -53,37 +53,29 @@ export const Header = () => {
   };
 
 
-    return  <div className="w-full px-4 lg:px-10 py-3 border-b">
+    return  <div className="w-full bg-[#c93c70] lg:bg-white px-4 lg:px-10 py-3 border-b">
       {showMobileSearch ? (
         <MobileSearch handleMobileSearch={() => setShowMobileSearch(false)} />
       ) : (
-      <div className="flex justify-between items-center h-[59px] w-full lg:w-[930px] m-auto lg:py-3">
+      <div className="flex justify-between items-center h-[50px] w-full lg:w-[930px] m-auto lg:py-3">
         <div className="flex items-center">
-          
-            <div
-              className="flex gap-2 font-black items-center " 
-            >
-              <MenuIcon />
-              <Link href={`/`}>
-                <Image src="/logoNoText.png" width={80} height={80} alt="logo"/>
-              </Link>
-            </div>
-        </div>
-
-        <div className="flex gap-3 lg:w-[723px] lg:justify-between">
           <div className="flex gap-3 items-center">
-            <div className="relative flex items-center">
+            <div className="relative flex items-center gap-1">
+              <MenuIcon className="text-white h-6 w-6"/>
+              {/* this is a search button on mobile display */}
+              <Button
+               onClick={() => setShowMobileSearch(true)}
+                className="bg-[#c93c70] border-none lg:hidden p-1"
+                variant="ghost"
+              >
+                <Search className="text-white" 
+                  strokeWidth={2}
+                  style={{ width: 24, height: 24 }}/>
+              </Button> 
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hidden lg:block"
                   size={20}
                 />
-              <Button
-               onClick={() => setShowMobileSearch(true)}
-                className="w-[36px] lg:hidden"
-                variant="outline"
-              >
-                <Search />
-              </Button>
               <Input
                   type="text"
                   placeholder="Search"
@@ -100,7 +92,18 @@ export const Header = () => {
              </div>)
             }
           </div>
-          <div className="flex items-center gap-4">
+          <div
+            className="flex gap-2 font-black items-center absolute left-1/2 transform -translate-x-1/2" 
+          >
+            <Link href={`/`}>
+              <Image src="/logo3.jpeg" width={100} height={100} alt="logo"/>
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex gap-3 lg:w-[723px] lg:justify-between">
+
+          <div className="flex items-center gap-4 text-white bg-[#c93c70] lg:bg-transparent">
               <Order />
           </div>
         </div>
