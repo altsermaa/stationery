@@ -11,40 +11,28 @@ import { SearchResult } from "./SearchResult";
 
 type handleMobileSearchType = {
   handleMobileSearch: () => void;
+  allProducts: Product[];
+  search: string;
+  setSearch: (search: string) => void;
+  onClear: () => void;
 };
 
-export const MobileSearch = ({
+export const  MobileSearch = ({
   handleMobileSearch,
+  allProducts,
+  search,
+  setSearch,
+  onClear,
 }: handleMobileSearchType) => {
-  const [search, setSearch] = useState("");
-   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
 
-  const clear = () => {
-    setAllProducts([]);
-    setSearch("");
-  };
-
-   useEffect(() => {
-    const getAllProducts = async () => {
-      const response = await axios.get(
-        "https://onlineshop-sqmq.onrender.com/getAllProducts"
-      );
-
-      const flatProducts = Object.values(response.data.products).flat() as Product[];
-    setAllProducts(flatProducts);
-    };
-
-    getAllProducts();
-  }, []);
-
   useEffect(() => {
     if (!search.trim()) {
-      setProducts([]);
+      setFilteredProducts([]);
       return;
     }
 
@@ -52,8 +40,9 @@ export const MobileSearch = ({
       product.productName.toLowerCase().includes(search.toLowerCase())
     );
 
-    setProducts(filtered);
+    setFilteredProducts(filtered);
   }, [search, allProducts]);
+
 
   return (
     <div className="flex justify-between items-center h-[59px] px-5 relative">
@@ -61,9 +50,9 @@ export const MobileSearch = ({
         <ChevronDown />
       </Button>
 
-      <div className="relative flex items-center">
+      <div className="relative flex items-center justify-center sm:w-[300px] md:w-[400px]">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-white"
           size={20}
         />
         <Input
@@ -71,43 +60,44 @@ export const MobileSearch = ({
           placeholder="Search"
           value={search}
           onChange={handleSearch}
-          className="pl-10 w-[250px] outline-none shadow-none border border-none"
+          className="pl-10 w-full outline-none shadow-none border border-white text-white placeholder:text-white bg-transparent"
         />
         
-        {search !== "" && products.length > 0 && (
+        {search !== "" && filteredProducts.length > 0 && (
           <div className="absolute w-[250px] border border-[#e4e3e6] p-5 bg-white z-10 flex rounded-xl top-10 flex-col m-auto">
-            {products.slice(0, 3).map((product) => {
-              return (
+            {filteredProducts.slice(0, 3).map((product) => {
+              return ( 
                 <SearchResult
-                 description={product.description} categoryId={product.categoryId} key={product._id} productName={product.productName} image={product.image} _id={product._id} price={product.price}
+                 description={product.description} categoryId={product.categoryId} key={product._id} productName={product.productName} image={product.image} _id={product._id} price={product.price} onClear={onClear}
                 />
               );
             })}
-            {/* <div className="border-t-1 py-2">
-              <Link href={`/searchResult?search=${search}`} onClick={clear}>
-                <p className="px-4 py-2">
+            <div className="border-t-1 py-2">
+              <Link href={`/searchResult?search=${search}&products=${encodeURIComponent(JSON.stringify(filteredProducts))}`}>
+                <p className="px-4 py-2 cursor-pointer" onClick={onClear}>
                   See more results of "{search}"
                 </p>
               </Link>
-            </div> */}
+            </div>
+            
           </div>
         )}
         
-        {search !== "" && products.length === 0 && (
-          <div onClick={clear} className="absolute w-[250px] h-[128px] border border-[#e4e3e6] p-5 bg-white z-10 flex rounded-xl top-10 justify-center items-center m-auto">
+        {search !== "" && filteredProducts.length === 0 && (
+          <div className="absolute w-[250px] h-[128px] border border-[#e4e3e6] p-5 bg-white z-10 flex rounded-xl top-10 justify-center items-center m-auto">
             <Loader2Icon className="animate-spin" />
           </div>
         )}
       </div>
 
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={handleMobileSearch}
-        className="outline-none"
-      >
-        X
-      </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleMobileSearch}
+          className="outline-none text-sm"
+        >
+          X
+        </Button>
     </div>
   );
 };

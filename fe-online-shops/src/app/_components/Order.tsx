@@ -115,11 +115,11 @@ export const Order = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button
-          className="rounded-2xl text-white bg-[#c93c70] border-none"
+          className="rounded-2xl text-white bg-[#c93c70] lg:bg-transparent border-none"
           variant="ghost"
           onClick={handleOpen}
         >
-          <ShoppingCart className="text-white bg-[#c93c70]" style={{ width: 24, height: 24 }} strokeWidth={2}/>
+          <ShoppingCart className="text-white bg-[#c93c70] lg:text-[#c93c70] lg:bg-transparent" style={{ width: 24, height: 24 }} strokeWidth={2}/>
           {cartCount !== 0 && (
             <div className="w-[20px] h-[20px] absolute z-10 rounded-full bg-red-500 ml-7  mb-8">
               {cartCount}
