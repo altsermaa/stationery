@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { ProductsRouter } from "./router/product-router";
 import { OrderRouter } from "./router/order-router";
+import carouselRouter from "./router/carousel-router";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -24,6 +25,7 @@ databaseConnect();
 
 app.use(ProductsRouter);
 app.use(OrderRouter);
+app.use("/api/carousel", carouselRouter);
 
 
 const PORT = process.env.PORT || 8000;

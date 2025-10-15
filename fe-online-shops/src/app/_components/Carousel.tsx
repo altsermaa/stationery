@@ -5,37 +5,40 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CarouselSlide } from "@/types/carousel";
+import axios from "axios";
 
 export const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slides, setSlides] = useState<CarouselSlide[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Carousel slides data
-  const slides = [
-    {
-      id: 1,
-      image: "/logo.jpeg",
-      title: "Welcome to Our Store",
-      subtitle: "Discover amazing products at great prices",
-      alt: "Store banner 1"
-    },
-    {
-      id: 2,
-      image: "/logo2.jpeg", 
-      title: "New Arrivals",
-      subtitle: "Check out our latest collection",
-      alt: "Store banner 2"
-    },
-    {
-      id: 3,
-      image: "/logo3.jpeg",
-      title: "Special Offers",
-      subtitle: "Don't miss out on our exclusive deals",
-      alt: "Store banner 3"
-    }
-  ];
+  // Fetch carousel slides from API
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await axios.get("https://onlineshop-sqmq.onrender.com/api/carousel");
+        if (response.data.success) {
+          setSlides(response.data.slides || []);
+        } else {
+          setError("Failed to load carousel slides");
+        }
+      } catch (err) {
+        console.error("Error fetching carousel slides:", err);
+        setError("Failed to load carousel slides");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlides();
+  }, []);
 
   // Auto-advance slides
   useEffect(() => {
+    if (slides.length === 0) return;
+    
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000); // Change slide every 5 seconds
@@ -55,6 +58,33 @@ export const Carousel = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="relative w-full h-[300px] lg:h-[400px] overflow-hidden flex items-center justify-center bg-gray-100">
+        <div className="text-gray-600">Loading carousel...</div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error && slides.length === 0) {
+    return (
+      <div className="relative w-full h-[300px] lg:h-[400px] overflow-hidden flex items-center justify-center bg-gray-100">
+        <div className="text-red-600">{error}</div>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (slides.length === 0) {
+    return (
+      <div className="relative w-full h-[300px] lg:h-[400px] overflow-hidden flex items-center justify-center bg-gray-100">
+        <div className="text-gray-600">No carousel slides available</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-[300px] lg:h-[400px] overflow-hidden">
       {/* Slides Container */}
@@ -62,14 +92,14 @@ export const Carousel = () => {
         className="flex transition-transform duration-500 ease-in-out h-full"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
-        {slides.map((slide) => (
-          <div key={slide.id} className="w-full h-full relative flex-shrink-0">
+        {slides.map((slide, index) => (
+          <div key={slide._id} className="w-full h-full relative flex-shrink-0">
             <Image
               src={slide.image}
-              alt={slide.alt}
+              alt={slide.imageAlt}
               fill
               className="object-cover"
-              priority={slide.id === 1}
+              priority={index === 0}
             />
             {/* Overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-30"></div>
@@ -82,6 +112,11 @@ export const Carousel = () => {
               <p className="text-sm lg:text-lg opacity-90">
                 {slide.subtitle}
               </p>
+              {slide.linkUrl && slide.linkText && (
+                <button className="mt-4 px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors">
+                  {slide.linkText}
+                </button>
+              )}
             </div>
           </div>
         ))}
