@@ -30,7 +30,7 @@ export default function SearchResultPage() {
     const getAllProducts = async () => {
       try {
         const response = await axios.get(
-          "https://onlineshop-sqmq.onrender.com/getAllProducts"
+          "http://localhost:8000/getAllProducts"
         );
         const flatProducts = Object.values(response.data.products).flat() as Product[];
         

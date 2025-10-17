@@ -28,7 +28,7 @@ export const AddCategory = () => {
         return;
       }
 
-      await axios.post("https://onlineshop-sqmq.onrender.com/createCategory", {
+      await axios.post("http://localhost:8000/createCategory", {
         categoryName: categoryName.trim(),
       });
 

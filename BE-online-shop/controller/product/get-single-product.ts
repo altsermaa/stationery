@@ -8,13 +8,28 @@ export const getSingleProduct = async (
   const { id } = request.params;
 
   try {
-    const productInfo = await ProductsModel.findById({ _id: id });
+    const productInfo = await ProductsModel.findById(id)
+      .populate('categoryId', 'categoryName')
+      .populate('subCategoryId', 'subCategoryName');
 
-    response.status(200).send({
+    if (!productInfo) {
+      return response.status(404).json({
+        success: false,
+        message: "Product not found"
+      });
+    }
+
+    response.status(200).json({
+      success: true,
       message: "Fetched product data successfully",
       fetchedData: productInfo,
     });
   } catch (err) {
-    response.status(400).send({ message: "Error in fetching data", err });
+    console.error("Error fetching product:", err);
+    response.status(500).json({
+      success: false,
+      message: "Error in fetching data",
+      error: err instanceof Error ? err.message : "Unknown error"
+    });
   }
 };

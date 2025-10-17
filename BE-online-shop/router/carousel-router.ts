@@ -6,16 +6,12 @@ import { deleteCarouselSlide } from "../controller/carousel/delete-carousel-slid
 
 const router = Router();
 
-// GET /api/carousel - Get all active carousel slides
-router.get("/", getAllCarouselSlides);
+router.get("/getAllCarousel", getAllCarouselSlides);
 
-// POST /api/carousel - Create a new carousel slide
-router.post("/", createCarouselSlide);
+router.post("/createCarousel", createCarouselSlide);
 
-// PUT /api/carousel/:id - Update a carousel slide
-router.put("/:id", updateCarouselSlide);
+router.put("/updateCarousel/:id", updateCarouselSlide);
 
-// DELETE /api/carousel/:id - Delete a carousel slide
-router.delete("/:id", deleteCarouselSlide);
+router.delete("/deleteCarousel/:id", deleteCarouselSlide);
 
 export default router;

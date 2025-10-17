@@ -17,7 +17,7 @@ export default function ProductTable() {
  useEffect(() => {
     const getAllProducts = async () => {
       const response = await axios.get(
-        "https://onlineshop-sqmq.onrender.com/getAllProducts",
+        "http://localhost:8000/getAllProducts",
        
       );
       setProducts(response?.data?.products);

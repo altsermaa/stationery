@@ -25,7 +25,7 @@ export default function OrderTable() {
   useEffect(() => {
     const getAllOrders = async () => {
       const response = await axios.get(
-        "https://onlineshop-sqmq.onrender.com/getAllOrders",
+        "http://localhost:8000/getAllOrders",
       );
       console.log(response?.data)
       setOrders(response?.data?.orders);
@@ -52,7 +52,7 @@ const saveChange = async () => {
     }));
 
     await axios.put(
-      "https://onlineshop-sqmq.onrender.com/updateOrderStatus",
+      "http://localhost:8000/updateOrderStatus",
       {
         orders: prepare,
       },

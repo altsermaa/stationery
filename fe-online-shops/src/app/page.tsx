@@ -3,7 +3,7 @@ import { ShowCards } from "./_components/ShowCards";
 import { Carousel } from "./_components/Carousel";
 
 const Home = async () => {
-  const response = await fetch("https://onlineshop-sqmq.onrender.com/getAllProducts", {
+  const response = await fetch("http://localhost:8000/getAllProducts", {
     cache: "no-store"
 
   });

@@ -15,7 +15,7 @@ interface Product {
 const DetailPage = async ({params}: {params: Promise<{id: string}>}) => {
   const { id } = await params;
 
-  const res = await fetch(`https://onlineshop-sqmq.onrender.com/getSingleProduct/${id}`, {
+  const res = await fetch(`http://localhost:8000/getSingleProduct/${id}`, {
     cache: "no-store",
   });
   const data: {fetchedData: Product } = await res.json();

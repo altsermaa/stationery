@@ -63,7 +63,7 @@ export const AddProduct = () => {
         }
       );
       const img = await result.json();
-      await axios.post("https://onlineshop-sqmq.onrender.com/createProduct", {
+      await axios.post("http://localhost:8000/createProduct", {
         productName: productName, // fixed typo
         price: price,
         image: img.secure_url,
@@ -85,7 +85,7 @@ export const AddProduct = () => {
 
   useEffect(()=> {
   const getCategory = async() => {
-    const response = await axios.get("https://onlineshop-sqmq.onrender.com/getCategories");
+    const response = await axios.get("http://localhost:8000/getCategories");
     console.log(response.data.fetchedData)
     setCategories(response.data.fetchedData)
   }; getCategory()

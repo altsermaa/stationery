@@ -1,9 +1,12 @@
-import express, { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { ProductsModel } from "../../model/product.model";
 
-export const getAllProducts = async (_request: Request, response: Response) => {
+export const getProductsByHoliday = async (req: Request, res: Response) => {
   try {
-    const allProducts = await ProductsModel.aggregate([
+    const products = await ProductsModel.aggregate([
+      {
+        $match: { isHoliday: true }
+      },
       {
         $lookup: {
           from: "productcategories",
@@ -48,22 +51,22 @@ export const getAllProducts = async (_request: Request, response: Response) => {
       },
     ]);
 
-    const groupByCategory = allProducts.reduce((acc, item) => {
+    const groupByCategory = products.reduce((acc, item) => {
       acc[item._id] = item.products;
       return acc;
     }, {});
 
-    response.status(200).json({
+    res.status(200).json({
       success: true,
-      message: "Products retrieved successfully",
+      message: "Holiday products retrieved successfully",
       products: groupByCategory
     });
-  } catch (err) {
-    console.error("Error fetching products:", err);
-    response.status(500).json({
+  } catch (error) {
+    console.error("Error fetching products by holiday:", error);
+    res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: err instanceof Error ? err.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error"
     });
   }
 };

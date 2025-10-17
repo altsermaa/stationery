@@ -18,7 +18,7 @@ export const Carousel = () => {
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const response = await axios.get("https://onlineshop-sqmq.onrender.com/api/carousel");
+        const response = await axios.get("http://localhost:8000/getAllCarousel");
         if (response.data.success) {
           setSlides(response.data.slides || []);
         } else {
@@ -94,52 +94,35 @@ export const Carousel = () => {
       >
         {slides.map((slide, index) => (
           <div key={slide._id} className="w-full h-full relative flex-shrink-0">
-            <Image
+            <img
               src={slide.image}
               alt={slide.imageAlt}
-              fill
-              className="object-cover"
-              priority={index === 0}
+              className="w-full h-full object-cover"
             />
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-            
+
             {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4">
-              <h2 className="text-2xl lg:text-4xl font-bold mb-2">
+            <div className="absolute inset-0 flex flex-col justify-start items-start text-left px-8 py-8 z-20">
+              <h2 className="text-2xl lg:text-4xl font-bold mb-2 text-black drop-shadow-lg">
                 {slide.title}
               </h2>
-              <p className="text-sm lg:text-lg opacity-90">
+              <p className="text-sm lg:text-lg opacity-90 text-black drop-shadow-lg max-w-fit">
                 {slide.subtitle}
               </p>
               {slide.linkUrl && slide.linkText && (
-                <button className="mt-4 px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors">
+                <a 
+                  href={slide.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors inline-block"
+                >
                   {slide.linkText}
-                </button>
+                </a>
               )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Navigation Arrows */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 border-none shadow-lg"
-        onClick={goToPrevious}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 border-none shadow-lg"
-        onClick={goToNext}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
 
       {/* Dots Indicator */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
