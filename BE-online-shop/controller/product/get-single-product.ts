@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ProductsModel } from "../../model/product.model";
+import mongoose from "mongoose";
 
 export const getSingleProduct = async (
   request: Request,
@@ -8,6 +9,14 @@ export const getSingleProduct = async (
   const { id } = request.params;
 
   try {
+    // Validate MongoDB ObjectId to avoid CastError 500s
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return response.status(400).json({
+        success: false,
+        message: "Invalid product id",
+      });
+    }
+
     const productInfo = await ProductsModel.findById(id)
       .populate('categoryId', 'categoryName')
       .populate('subCategoryId', 'subCategoryName');

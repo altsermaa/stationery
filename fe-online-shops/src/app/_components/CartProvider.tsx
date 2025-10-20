@@ -26,8 +26,6 @@ export const CartContext = createContext<CartContextType>(
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItemType[]>([]);
 
-  console.log(cart)
-
   const [cartCount, setCartCount] = useState<number>(0);
 
   const updateCartCount = () => {

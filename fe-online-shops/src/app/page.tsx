@@ -1,6 +1,8 @@
 import { Header } from "./_components/Header";
 import { ShowCards } from "./_components/ShowCards";
 import { Carousel } from "./_components/Carousel";
+import NewArrivals from "./_components/NewArrivals";
+import HolidaySection from "./_components/HolidaySection";
 
 const Home = async () => {
   const response = await fetch("http://localhost:8000/getAllProducts", {
@@ -14,6 +16,8 @@ const Home = async () => {
           <div className="mb-8">
         <Carousel />
       </div>
+      <NewArrivals />
+      <HolidaySection />
     <div className="w-[360px] lg:w-[930px] mx-auto">
       <ShowCards products={data.products} />
     </div>

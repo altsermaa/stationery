@@ -10,6 +10,7 @@ import { Product } from "./ShowCards";
 import axios from "axios";
 import { SearchResult } from "./SearchResult";
 import { MobileSearch } from "./MobileSearch";
+import { usePathname } from "next/navigation";
 
 
 export const Header = () => {
@@ -20,12 +21,16 @@ export const Header = () => {
 
   useEffect(() => {
     const getAllProducts = async () => {
-      const response = await axios.get(
-        "http://localhost:8000/getAllProducts"
-      );
-
-      const flatProducts = Object.values(response.data.products).flat() as Product[];
-    setAllProducts(flatProducts);
+      try {
+        const response = await axios.get("http://localhost:8000/getAllProducts");
+        
+        if (response.data.products) {
+          const flatProducts = Object.values(response.data.products).flat() as Product[];
+          setAllProducts(flatProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     };
 
     getAllProducts();
@@ -44,11 +49,11 @@ export const Header = () => {
     setFilteredProducts(filtered);
   }, [search, allProducts]);
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value)
-    }
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
 
-    const handleMobileSearch = () => {
+  const handleMobileSearch = () => {
     setShowMobileSearch(!showMobileSearch);
   };
 
@@ -57,9 +62,13 @@ export const Header = () => {
     setSearch("");
   };
 
+  const pathName = usePathname(); 
+  const paths = ["/login", "/register", "/admin"];
 
-    return  <div className="w-full bg-[#c93c70] lg:bg-white px-4 lg:px-10 py-3">
-      {showMobileSearch ? (
+  return (
+    <div className="w-full bg-[#c93c70] lg:bg-white px-4 lg:px-10 py-3">
+      {paths.includes(pathName) ? null : (
+        showMobileSearch ? (
         <MobileSearch 
           handleMobileSearch={() => setShowMobileSearch(false)} 
           allProducts={allProducts}
@@ -136,11 +145,14 @@ export const Header = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <CircleUser className="text-white lg:text-[#c93c70] h-6 w-6"/>
+            <Link href="/login">
+              <CircleUser className="text-white lg:text-[#c93c70] h-6 w-6 cursor-pointer hover:opacity-80 transition-opacity"/>
+            </Link>
             <Order />
           </div>
         </div>
+        )
       )}
-
-  </div>
-}
+    </div>
+  );
+};

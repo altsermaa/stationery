@@ -15,6 +15,4 @@ const HolidaySettings = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-HolidaySettings.index({ holidayName: 1 }, { unique: true });
-
 export const HolidaySettingsModel = model<HolidaySettings>("HolidaySettings", HolidaySettings);

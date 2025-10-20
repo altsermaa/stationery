@@ -6,7 +6,8 @@ export interface Product {
   image: string, 
   price: number, 
   description: string, 
-  categoryId: string
+  categoryId: string,
+  quantity: number
 }
 
 export type CategoryProductType ={
@@ -32,7 +33,7 @@ export const ShowCards = ({ products }: CategoryProductType ) => {
                 {products[el].slice(0, 6).map((product) => {
                   return (
                     <div key={index}>
-                    <ProductCard image={product.image} productName={product.productName} description={product.description} price={product.price} _id={product._id} categoryId={product.categoryId}/>
+                    <ProductCard image={product.image} productName={product.productName} description={product.description} price={product.price} _id={product._id} categoryId={product.categoryId} quantity={product.quantity}/>
                     </div>
                   );
                 })}

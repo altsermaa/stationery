@@ -6,6 +6,7 @@ import { OrderRouter } from "./router/order-router";
 import carouselRouter from "./router/carousel-router";
 import { SubCategoryRouter } from "./router/subcategory-router";
 import { HolidayRouter } from "./router/holiday-router";
+import userRouter from "./router/user-router";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use(OrderRouter);
 app.use(carouselRouter);
 app.use(SubCategoryRouter);
 app.use(HolidayRouter);
+app.use(userRouter);
 
 
 const PORT = process.env.PORT || 8000;

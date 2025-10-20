@@ -4,14 +4,19 @@ import { ProductOrderModel } from "../../model/productOrder.model";
 export const getAllOrders = async (_request: Request, response: Response) => {
 
   try {
-    const allOrders = await ProductOrderModel.find({
-    }).populate({
-      path: "productOrderItems",
-      populate: {
-        path: "product",
-        model: "Products",
-      },
-    });
+    const allOrders = await ProductOrderModel.find({})
+      .populate({
+        path: "userId",
+        model: "User",
+        select: "-password", // Exclude password from user data
+      })
+      .populate({
+        path: "productOrderItems",
+        populate: {
+          path: "product",
+          model: "Products",
+        },
+      });
 
     response.status(200).send({
       message: "Order fetched successfully",

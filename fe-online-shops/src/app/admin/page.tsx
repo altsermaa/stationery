@@ -2,9 +2,10 @@
 import { useState } from "react";
 import ProductTable from "./_components/ProductTable";
 import OrderTable from "./_components/OrderTable";
+import HolidaySettings from "./_components/HolidaySettings";
 
 export default function AdminPage() {
-  const [tab, setTab] = useState<'products' | 'orders'>("products");
+  const [tab, setTab] = useState<'products' | 'orders' | 'holidays'>("products");
 
   return (
     <div className="max-w-5xl mx-auto p-4">
@@ -22,8 +23,14 @@ export default function AdminPage() {
         >
           Orders
         </button>
+        <button
+          className={`px-4 py-2 rounded ${tab === 'holidays' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          onClick={() => setTab('holidays')}
+        >
+          Holiday Settings
+        </button>
       </div>
-      {tab === 'products' ? <ProductTable /> : <OrderTable />}
+      {tab === 'products' ? <ProductTable /> : tab === 'orders' ? <OrderTable /> : <HolidaySettings />}
     </div>
   );
 } 
