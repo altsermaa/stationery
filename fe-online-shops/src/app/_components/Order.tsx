@@ -91,6 +91,13 @@ export const Order = () => {
         );
 
         try {
+          // Get the token from localStorage
+          const token = localStorage.getItem("token");
+          if (!token) {
+            alert("You must be logged in to place an order");
+            return;
+          }
+
           const response = await axios.post(
             "http://localhost:8000/createOrder",
             {
@@ -100,6 +107,11 @@ export const Order = () => {
               phoneNumber2, 
               address,
             },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           alert("Order placed successfully");
           localStorage.setItem("productCart", "[]");

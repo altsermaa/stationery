@@ -5,16 +5,19 @@ export const createProduct = async (request: Request, response: Response) => {
   const { productName, price, image, description, categoryId, subCategoryId, isNewIn, isHoliday, quantity } = request.body;
 
   try {
-    // Validate required fields
-    if (!productName || !price || !image || !description || !categoryId || !subCategoryId || quantity === undefined) {
+    // Validate required fields (subCategoryId is optional)
+    if (!productName || !price || !image || !description || !categoryId) {
       return response.status(400).json({
         success: false,
-        message: "All fields are required: productName, price, image, description, categoryId, subCategoryId, quantity"
+        message: "Required fields: productName, price, image, description, categoryId"
       });
     }
 
+    // Set default quantity if not provided
+    const productQuantity = quantity !== undefined ? quantity : 0;
+
     // Validate quantity
-    if (quantity < 0) {
+    if (productQuantity < 0) {
       return response.status(400).json({
         success: false,
         message: "Quantity must be 0 or greater"
@@ -24,17 +27,23 @@ export const createProduct = async (request: Request, response: Response) => {
     const isProductExisted = await ProductsModel.findOne({ productName });
 
     if (!isProductExisted) {
-      await ProductsModel.create({
+      const productData: any = {
         productName,
         price,
         image,
         description,
         categoryId,
-        subCategoryId,
         isNewIn: isNewIn || false,
         isHoliday: isHoliday || false,
-        quantity: quantity,
-      });
+        quantity: productQuantity,
+      };
+
+      // Only add subCategoryId if provided
+      if (subCategoryId) {
+        productData.subCategoryId = subCategoryId;
+      }
+
+      await ProductsModel.create(productData);
       
       response.status(201).json({
         success: true,

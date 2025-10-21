@@ -21,7 +21,7 @@ const Products = new Schema({
   image: { type: String, required: true },
   description: { type: String, required: true },
   categoryId: { type: Schema.ObjectId, required: true, ref: "ProductCategories" },
-  subCategoryId: { type: Schema.ObjectId, required: true, ref: "ProductSubCategories" },
+  subCategoryId: { type: Schema.ObjectId, ref: "ProductSubCategories" },
   isNewIn: { type: Boolean, default: false },
   isHoliday: { type: Boolean, default: false },
   quantity: { type: Number, required: true, min: 0 },

@@ -24,11 +24,26 @@ export default function OrderTable() {
 
   useEffect(() => {
     const getAllOrders = async () => {
-      const response = await axios.get(
-        "http://localhost:8000/getAllOrders",
-      );
-      console.log(response?.data)
-      setOrders(response?.data?.orders);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("You must be logged in to view orders");
+          return;
+        }
+
+        const response = await axios.get(
+          "http://localhost:8000/getAllOrders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(response?.data)
+        setOrders(response?.data?.orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
     };
     getAllOrders();
   }, []);
@@ -46,24 +61,40 @@ export default function OrderTable() {
   };
 
 const saveChange = async () => {
-    const prepare = selectedOrdersId.map((el) => ({
-      _id: el,
-      status: orderStatus,
-    }));
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You must be logged in to update orders");
+        return;
+      }
 
-    await axios.put(
-      "http://localhost:8000/updateOrderStatus",
-      {
-        orders: prepare,
-      },
-    );
+      const prepare = selectedOrdersId.map((el) => ({
+        _id: el,
+        status: orderStatus,
+      }));
 
-    const updated = orders.map((item) => {
-      selectedOrdersId.includes(item._id)
-      ? { ...item, status: orderStatus }
-      : item
-    });
-    setOrders(updated);
+      await axios.put(
+        "http://localhost:8000/updateOrderStatus",
+        {
+          orders: prepare,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updated = orders.map((item) => {
+        selectedOrdersId.includes(item._id)
+        ? { ...item, status: orderStatus }
+        : item
+      });
+      setOrders(updated);
+    } catch (error) {
+      console.error("Error updating orders:", error);
+      alert("Failed to update order status");
+    }
   };
 
   // Pagination logic

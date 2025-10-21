@@ -1,5 +1,5 @@
 import { Header } from "./_components/Header";
-import { ShowCards } from "./_components/ShowCards";
+import { CategoryBox } from "./_components/CategoryBox";
 import { Carousel } from "./_components/Carousel";
 import NewArrivals from "./_components/NewArrivals";
 import HolidaySection from "./_components/HolidaySection";
@@ -12,15 +12,13 @@ const Home = async () => {
   const data = await response.json();
   console.log(data);
 
-  return (<div className="flex flex-col gap-8">
-          <div className="mb-8">
+  return (<div className="flex flex-col gap-8 bg-gray-50">
+      <div className="mb-8">
         <Carousel />
       </div>
       <NewArrivals />
       <HolidaySection />
-    <div className="w-[360px] lg:w-[930px] mx-auto">
-      <ShowCards products={data.products} />
-    </div>
+      <CategoryBox products={data.products} />
   </div>
     
   );
