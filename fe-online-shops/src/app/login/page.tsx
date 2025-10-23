@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import * as Yup from "yup";
+import { useUser } from "../_components/UserProvider";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ email?: string }>({});
   const router = useRouter();
+  const { user } = useUser();
 
   const emailSchema = Yup.string()
     .required("Email is required")
@@ -43,12 +45,10 @@ const LoginPage = () => {
       const response = await axios.post("http://localhost:8000/login", formData);
       
       if (response.data.success) {
-        // Store token in localStorage
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        // Store only token in localStorage
         
         // Redirect based on user role
-        if (response.data.user.role === "Admin") {
+        if (user?.role === "Admin") {
           router.push("/admin");
         } else {
           router.push("/");

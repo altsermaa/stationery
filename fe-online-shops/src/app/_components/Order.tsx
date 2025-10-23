@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -20,10 +19,9 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import { useCart } from "./CartProvider";
-import { Input } from "@/components/ui/input";
 import { OrderedItem } from "./OrderedItem";
 import { Product } from "./ShowCards";
-import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 
 export type ProductOrderItemType = {
@@ -37,88 +35,23 @@ enum ProductOrderEnum {
   DELIVERED = "DELIVERED",
 }
 
-const orderSchema = z.object({
-  address: z.string().min(1, "Address is required"),
-  phoneNumber1: z.string().min(1, "Phone number is required"),
-  phoneNumber2: z.string().min(1, "Second phone number is required"),
-});
-
 export const Order = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { cart, setCart, cartCount } = useCart();
   console.log(cart)
 
-  const [address, setAddress] = useState("");
-  const handleAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAddress(event.target.value);
-  };
-
-  const [phoneNumber1, setPhoneNumber1] = useState("");
-  const handlePhoneNumber1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumber1(event.target.value);
-  };
-
-  const [phoneNumber2, setPhoneNumber2] = useState("");
-  const handlePhoneNumber2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumber2(event.target.value);
-  };
-
-  const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleOpen = () => setIsOpen(true);
 
   const handleSubmit = async () => {
-    const result = orderSchema.safeParse({
-      address,
-      phoneNumber1,
-      phoneNumber2,
-    });
-
-    if (!result.success) {
-      setFormError(result.error.issues[0].message);
-      return;
-    }
-    setFormError(null);
-      
-        const backEndData = cart.map((product) => ({
-          product: product._id,
-          quantity: product.addcount,
-        }));
-
-        const totalPrice = (Array.isArray(cart) ? cart : []).reduce(
-          (total, product) => total + product.price * product.addcount,
-          0
-        );
-
-        try {
-          // Get the token from localStorage
-          const token = localStorage.getItem("token");
-          if (!token) {
-            alert("You must be logged in to place an order");
-            return;
-          }
-
-          const response = await axios.post(
-            "http://localhost:8000/createOrder",
-            {
-              productOrderItems: backEndData,
-              totalPrice,
-              phoneNumber1, 
-              phoneNumber2, 
-              address,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          alert("Order placed successfully");
-          localStorage.setItem("productCart", "[]");
-          setCart([]);
-        } catch (err: any) {
-          alert(err?.response?.data?.message);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          router.push("/login");
+          return;
         }
+        setIsOpen(false);
+        router.push("/confirm");
       }
 
       const itemsSum = (Array.isArray(cart) ? cart : []).reduce((total, product) => total + product.price * product.addcount,0)
@@ -133,17 +66,17 @@ export const Order = () => {
         >
           <ShoppingCart className="text-white bg-[#c93c70] lg:text-[#c93c70] lg:bg-transparent" style={{ width: 24, height: 24 }} strokeWidth={2}/>
           {cartCount !== 0 && (
-            <div className="w-[20px] h-[20px] absolute z-10 rounded-full bg-red-500 ml-7  mb-8">
+            <div className="absolute z-10 ml-7 mb-8 text-xs" style={{ color: '#c93c70' }}>
               {cartCount}
             </div>
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="rounded-2xl bg-[#404040] border shadow-black flex flex-col gap-6 
+      <SheetContent className="rounded-2xl bg-white border shadow-black flex flex-col gap-6 
     w-full sm:max-w-md md:max-w-lg lg:max-w-xl
     max-h-[90vh] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="flex text-white gap-2">
+          <SheetTitle className="flex text-black gap-2">
             <ShoppingCart className="text-sm" />
             <p>Захиалгын мэдээлэл</p>
           </SheetTitle>
@@ -178,36 +111,13 @@ export const Order = () => {
                     />
                   );
                 })}
-                <div className="grid w-full max-w-md gap-3">
-                  <Label htmlFor="address">Хаяг</Label>
-                  <Input placeholder="Please share your complete address"
-                    id="address"
-                    value={address}
-                    onChange={handleAddress}/>
-
-                  <Label htmlFor="phoneNumber1">Холбоо барих утас</Label>
-                  <Input placeholder="Contact number"
-                    id="phoneNumber1"
-                    value={phoneNumber1}
-                    onChange={handlePhoneNumber1}/>
-
-                  <Label htmlFor="phoneNumber2">Өөр холбоо барих утас</Label>
-                  <Input placeholder="Another contact number"
-                    id="phoneNumber2"
-                    value={phoneNumber2}
-                    onChange={handlePhoneNumber2}/>
-
-                  {formError && (
-                    <div className="text-red-500 text-sm mb-2">{formError}</div>
-                  )}
-                </div>
               </CardContent>
             </Card>
-            <Card className="w-full max-w-[471px] mt-6">
+            <Card className="w-full max-w-lg mt-6">
               <CardHeader>
                 <CardTitle>Payment Info</CardTitle>
               </CardHeader>
-              <CardContent className="my-5 w-full max-w-[439px]">
+              <CardContent className="my-5 w-full max-w-lg">
                 <div className="flex justify-between">
                   <p>Items</p>
                   {itemsSum}₮
@@ -223,11 +133,11 @@ export const Order = () => {
                 </div>
               </CardContent>
               <CardFooter className="w-full">
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={handleSubmit}
-                >
+                  <Button
+                    variant="destructive"
+                    className="w-full bg-[#c93c70] text-white text-sm"
+                    onClick={handleSubmit}
+                  >
                   Захиалга өгөх
                 </Button>
               </CardFooter>
