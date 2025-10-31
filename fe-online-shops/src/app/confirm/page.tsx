@@ -31,9 +31,8 @@ type UserResponse = {
 
 export default function ConfirmPage() {
   const router = useRouter();
-  const { setCart: setContextCart } = useCart();
+  const { cart, setCart: setContextCart } = useCart();
   const { user, isLoading, isAuthenticated } = useUser();
-  const [cart, setCart] = useState<ProductCartItem[]>([]);
   
   // Editable user info state
   const [email, setEmail] = useState("");
@@ -46,10 +45,6 @@ export default function ConfirmPage() {
       router.replace("/login");
       return;
     }
-
-    // Initialize cart from localStorage
-    const cartStr = localStorage.getItem("productCart") || "[]";
-    setCart(JSON.parse(cartStr));
 
     // Initialize editable fields with user data when user is available
     if (user) {
@@ -117,7 +112,6 @@ export default function ConfirmPage() {
         }
       );
       alert("Order placed successfully");
-      localStorage.setItem("productCart", "[]");
       setContextCart([]);
       router.push("/");
     } catch (err: any) {

@@ -19,7 +19,6 @@ type UserContextType = {
   isLoading: boolean;
   isAuthenticated: boolean;
   logout: () => void;
-  refreshUser: () => Promise<void>;
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -27,7 +26,6 @@ export const UserContext = createContext<UserContextType>({
   isLoading: true,
   isAuthenticated: false,
   logout: () => {},
-  refreshUser: async () => {},
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -43,6 +41,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshUser = async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    console.log("UserProvider: Starting refreshUser, token exists:", !!token);
     
     if (!token) {
       setUser(null);
@@ -64,18 +63,29 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
+      console.log("UserProvider: Making API call to fetch user data");
       const response = await axios.get(
         `http://localhost:8000/user/${extractedUserId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000, // 5 second timeout
         }
       );
-      setUser(response.data.user);
+      console.log("UserProvider: API response received:", response.data);
+      if (response.data.success) {
+        setUser(response.data.user);
+        console.log("UserProvider: User data set successfully");
+      } else {
+        console.error("API returned error:", response.data.message);
+        logout();
+      }
     } catch (error) {
       console.error("Error fetching user data:", error);
-      logout();
+      // Don't logout immediately on network errors, just set loading to false
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
+      console.log("UserProvider: Loading state set to false");
     }
   };
 
@@ -92,7 +102,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         isLoading,
         isAuthenticated,
         logout,
-        refreshUser,
       }}
     >
       {children}

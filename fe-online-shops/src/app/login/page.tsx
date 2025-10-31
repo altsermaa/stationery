@@ -45,7 +45,8 @@ const LoginPage = () => {
       const response = await axios.post("http://localhost:8000/login", formData);
       
       if (response.data.success) {
-        // Store only token in localStorage
+        // Store token in localStorage
+        localStorage.setItem("token", response.data.token);
         
         // Redirect based on user role
         if (user?.role === "Admin") {
